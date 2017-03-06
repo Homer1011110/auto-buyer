@@ -1,13 +1,25 @@
-import * as path from "path"
+const path = require("path")
+const copyWebpackPlugin = require("copy-webpack-plugin")
 
-let config = {
-  entry: "./src/index.js",
+const soureDir = "./src"
+
+const config = {
+  entry: {
+    background: soureDir + "/background_scripts/index.js",
+    content: soureDir + "/content_scripts/index.js",
+    popup: soureDir + "/popup/index.js"
+  },
   output: {
-    filename: "bundle.js",
+    filename: "[name].js",
     path: path.resolve(__dirname, "dist")
-  }
+  },
+  plugins: [
+    new copyWebpackPlugin([
+      {from: "./src/manifest.json", to: "manifest.json"}
+    ], {
+      copyUnmodified: true
+    })
+  ]
 }
 
-console.log(__dirname)
-
-export = config
+module.exports = config
