@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "auto buyer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "browser_action": {
     "default_icon": {
       "16": "imgs/auto-buyer.png"
