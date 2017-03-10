@@ -1,2 +1,3 @@
 // just run once ?
-console.log("%c background script run!!", "background: ccc; color: red")
+let d = new Date()
+console.log(`%c background script run!! ${d}`, "background: ccc; color: red")

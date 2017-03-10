@@ -68,11 +68,14 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 // just run once ?
-console.log("%c background script run!!", "background: ccc; color: red")
-
+var d = new Date();
+console.log("%c background script run!! " + d, "background: ccc; color: red");
 
 /***/ })
 /******/ ]);

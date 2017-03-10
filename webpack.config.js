@@ -51,6 +51,17 @@ const config = {
     filename: "[name].js",
     path: path.resolve(__dirname, "dist")
   },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        loader: "babel-loader",
+        options: {
+          presets: ["es2015"]
+        }
+      }
+    ]
+  },
   plugins: [
     new copyWebpackPlugin([
       {from: "./src/imgs", to: "imgs"},
@@ -59,8 +70,7 @@ const config = {
       {from: "./src/content_scripts/index.css", to: "content.css"}
     ], {
       copyUnmodified: true
-    }),
-    new GenerateVersionPlugin()
+    })
   ]
 }
 

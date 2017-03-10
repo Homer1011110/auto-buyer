@@ -69,11 +69,13 @@
 /******/ ({
 
 /***/ 2:
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 // every time user click the browser action , chrome will run these code
-console.log("popup script run!", new Date())
-
+console.log("popup script run!", new Date());
 
 /***/ })
 
