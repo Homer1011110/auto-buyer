@@ -10,7 +10,11 @@ function GenerateVersionPlugin(options) {
   // setup the plugin instance with options
 }
 GenerateVersionPlugin.prototype.generateVersion = function() {
-  return Math.random().toString(32).substr(2,9)
+  let version = Math.floor(Math.random()*65536)
+  for(let i = 0; i < 3; i++) {
+    version = version + "." + Math.floor(Math.random()*65536)
+  }
+  return version
 }
 GenerateVersionPlugin.prototype.apply = function(compiler) {
   let self = this
@@ -22,6 +26,7 @@ GenerateVersionPlugin.prototype.apply = function(compiler) {
       }
       let extensionManifest = JSON.parse(data)
       extensionManifest.version = self.generateVersion()
+      console.log(extensionManifest.version)
       compilation.assets["manifest.json"] = {
         source: function() {
           return JSON.stringify(extensionManifest)
@@ -46,14 +51,6 @@ const config = {
     filename: "[name].js",
     path: path.resolve(__dirname, "dist")
   },
-  module: [
-    loaders: [
-      {
-        test: /\.less$/,
-        loader: "less-loader"
-      }
-    ]
-  ],
   plugins: [
     new copyWebpackPlugin([
       {from: "./src/imgs", to: "imgs"},
