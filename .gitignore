@@ -1,2 +1,5 @@
 #ignore all node modules
 node_modules/
+spider.js
+temp.js
+test.js

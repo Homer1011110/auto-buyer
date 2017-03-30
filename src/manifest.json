@@ -14,7 +14,11 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://miao.item.taobao.com/*", "https://www.baidu.com/*"],
+      "matches": [
+        "*://miao.item.taobao.com/*",
+        "*://item.jd.com/*",
+        "*://cashier.jd.com/*"
+      ],
       "css": ["content.css"],
       "js": ["content.js"]
     }

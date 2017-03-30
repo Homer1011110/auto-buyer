@@ -64,6 +64,7 @@ const config = {
   },
   plugins: [
     new copyWebpackPlugin([
+      {from: "./src/manifest.json", to: "manifest.json"},
       {from: "./src/imgs", to: "imgs"},
       {from: "./src/popup/index.html", to: "popup.html"},
       {from: "./src/popup/index.css", to: "popup.css"},
