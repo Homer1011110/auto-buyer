@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-
+/******/
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-
+/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,19 +55,38 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-
+/******/
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = {
+  jdHeaderLoginLink: "#ttbar-login > a.link-login.style-red", // 登录按钮
+  jdEasyBuyBtn: "#btn-easybuy-submit", // 一键购
+  jdOnKeyBuyBtn: "#btn-onkeybuy", // 一键购
+  jdMiaoShaBanner: "#banner-miaosha", // 秒杀提示栏
+  jdPayPasswordInput: "#payPwd",
+  jdPaySubmitBtn: "#paySubmit"
+};
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -131,7 +150,7 @@ var ContentScript = function () {
 exports.default = ContentScript;
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -141,19 +160,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-<<<<<<< HEAD
-  if (documentReadyState !== "complete") {
-    // BUG: sometimes onload event will not be fired
-    console.log(1);
-    window.addEventListener("load", function onLoad(e) {
-      console.log("onload:", e);
-      console.log(document.querySelector("#J_SecKill > div.tb-sec-kill-upper > div.tb-sk-btns > a"));
-    });
-  } else {
-    console.log("complete! onload event will not be emitted any more");
-    // onload event will no longer trigger any more
-=======
-var _elementConfig = __webpack_require__(6);
+var _elementConfig = __webpack_require__(0);
 
 var _elementConfig2 = _interopRequireDefault(_elementConfig);
 
@@ -168,7 +175,7 @@ exports.default = {
         alert("element not exist: payPasswordInput--" + jdPayPasswordInput + ", jdPaySubmitBtn--" + jdPaySubmitBtn);
         return;
       }
-      jdPayPasswordInput.value = "wsh940805";
+      jdPayPasswordInput.value = "xxxxx";
       jdPaySubmitBtn.click();
     });
   },
@@ -176,7 +183,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -186,11 +193,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _elementConfig = __webpack_require__(6);
+var _elementConfig = __webpack_require__(0);
 
 var _elementConfig2 = _interopRequireDefault(_elementConfig);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var serverDate = null;
+
+function synchronisedTime(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", function (e) {
+    var date = new Date(this.getResponseHeader("date"));
+    callback.call(null, date);
+  });
+  xhr.open("get", url);
+  xhr.send();
+}
 
 exports.default = {
   onInteractive: function onInteractive() {
@@ -201,43 +220,50 @@ exports.default = {
         return;
       }
       var jdEasyBuyBtn = document.querySelector(_elementConfig2.default.jdEasyBuyBtn);
-      if (!jdEasyBuyBtn) {
-        alert("一键购按钮未加载");
-        console.log("jd easy buy btn , ", jdEasyBuyBtn);
-        return;
-      }
-      jdEasyBuyBtn.click();
+      var jdOnKeyBuyBtn = document.querySelector(_elementConfig2.default.jdOnKeyBuyBtn);
+      // if(jdEasyBuyBtn) {
+      //   console.log("jdEasyBuyBtn")
+      //   jdEasyBuyBtn.click()
+      // } else if(jdOnKeyBuyBtn) {
+      //   console.log("jdOnKeyBuyBtn")
+      //   jdOnKeyBuyBtn.click()
+      // } else {
+      //   alert("一键购按钮未加载")
+      //   console.log("jd easy buy btn , ", jdEasyBuyBtn, "jd on key buy btn, ", jdOnKeyBuyBtn)
+      //   return
+      // }
+    });
+    synchronisedTime("https://item.jd.com/2693720.html", function (date) {
+      serverDate = date;
+      console.log(serverDate);
     });
   },
   onComplete: function onComplete() {
     // NOTE: window.onload will not be fired any more
->>>>>>> d13da11bb62faa5d4687f803f15c1e950c13ca24
   }
 };
 
 /***/ }),
-/* 3 */,
-/* 4 */
+/* 4 */,
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _ContentScript = __webpack_require__(0);
+var _ContentScript = __webpack_require__(1);
 
 var _ContentScript2 = _interopRequireDefault(_ContentScript);
 
-var _itemJd = __webpack_require__(2);
+var _itemJd = __webpack_require__(3);
 
 var _itemJd2 = _interopRequireDefault(_itemJd);
 
-var _cashierJd = __webpack_require__(1);
+var _cashierJd = __webpack_require__(2);
 
 var _cashierJd2 = _interopRequireDefault(_cashierJd);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-console.log("content script");
 
 var app = new _ContentScript2.default();
 
@@ -245,24 +271,6 @@ app.route("item.jd.com", _itemJd2.default);
 app.route("cashier.jd.com", _cashierJd2.default);
 
 app.run();
-
-/***/ }),
-/* 5 */,
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = {
-  jdHeaderLoginLink: "#ttbar-login > a.link-login.style-red",
-  jdEasyBuyBtn: "#btn-easybuy-submit",
-  jdPayPasswordInput: "#payPwd",
-  jdPaySubmitBtn: "#paySubmit"
-};
 
 /***/ })
 /******/ ]);
