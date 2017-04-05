@@ -9,14 +9,11 @@ class ContentScript {
       console.log(1)
       window.addEventListener("load", function onLoad(e) {
         console.log("onload:", e)
-      })
-    } else {
-      console.log(2)
-      // onload event will no longer trigger any more
-      window.addEventListener("load", function onLoad(e) {
         console.log(document.querySelector("#J_SecKill > div.tb-sec-kill-upper > div.tb-sk-btns > a"))
       })
-
+    } else {
+      console.log("complete! onload event will not be emitted any more")
+      // onload event will no longer trigger any more
     }
   }
 }
