@@ -3,6 +3,7 @@ export default {
   jdEasyBuyBtn: "#btn-easybuy-submit", // 一键购
   jdOnKeyBuyBtn: "#btn-onkeybuy", // 一键购
   jdMiaoShaBanner: "#banner-miaosha", // 秒杀提示栏
+  jdMiaoShaMessage: "#banner-miaosha .activity-message",
   jdPayPasswordInput: "#payPwd",
   jdPaySubmitBtn: "#paySubmit"
 }

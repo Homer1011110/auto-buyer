@@ -1,41 +1,41 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-/******/
+
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-/******/
+
 /******/ 		// Check if module is in cache
 /******/ 		if(installedModules[moduleId])
 /******/ 			return installedModules[moduleId].exports;
-/******/
+
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
 /******/ 			l: false,
 /******/ 			exports: {}
 /******/ 		};
-/******/
+
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
+
 /******/ 		// Flag the module as loaded
 /******/ 		module.l = true;
-/******/
+
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
-/******/
+
+
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-/******/
+
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
+
 /******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
+
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
@@ -46,7 +46,7 @@
 /******/ 			});
 /******/ 		}
 /******/ 	};
-/******/
+
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -55,13 +55,13 @@
 /******/ 		__webpack_require__.d(getter, 'a', getter);
 /******/ 		return getter;
 /******/ 	};
-/******/
+
 /******/ 	// Object.prototype.hasOwnProperty.call
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
+
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-/******/
+
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
@@ -81,6 +81,7 @@ exports.default = {
   jdEasyBuyBtn: "#btn-easybuy-submit", // 一键购
   jdOnKeyBuyBtn: "#btn-onkeybuy", // 一键购
   jdMiaoShaBanner: "#banner-miaosha", // 秒杀提示栏
+  jdMiaoShaMessage: "#banner-miaosha .activity-message",
   jdPayPasswordInput: "#payPwd",
   jdPaySubmitBtn: "#paySubmit"
 };
@@ -200,6 +201,7 @@ var _elementConfig2 = _interopRequireDefault(_elementConfig);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var serverDate = null;
+var activityDate = null;
 
 function synchronisedTime(url, callback) {
   var xhr = new XMLHttpRequest();
@@ -213,33 +215,64 @@ function synchronisedTime(url, callback) {
 
 exports.default = {
   onInteractive: function onInteractive() {
-    window.addEventListener("load", function () {
-      var jdHeaderLoginLink = document.querySelector(_elementConfig2.default.jdHeaderLoginLink);
-      if (jdHeaderLoginLink) {
-        alert("请先登录");
-        return;
-      }
+    var pOnload = new Promise(function (resolve, reject) {
+      window.addEventListener("load", function () {
+        console.log("onload");
+        resolve();
+      });
+    });
+    var pSynchronised = new Promise(function (resolve, reject) {
+      synchronisedTime("https://item.jd.com/2693720.html", function (date) {
+        serverDate = date;
+        console.log("synchronisedTime");
+        resolve();
+      });
+    });
+    Promise.all([pOnload, pSynchronised]).then(function () {
+      return new Promise(function (resolve, reject) {
+        console.log("onload & synchronisedTime done");
+        var jdHeaderLoginLink = document.querySelector(_elementConfig2.default.jdHeaderLoginLink);
+        if (jdHeaderLoginLink) {
+          alert("请先登录");
+          reject("didn't login");
+          return;
+        }
+        var jdMiaoShaBanner = document.querySelector(_elementConfig2.default.jdMiaoShaBanner);
+        if (!jdMiaoShaBanner) {
+          alert("此商品不参与抢购活动");
+          reject("have no activity");
+          return;
+        } else {
+          var jdMiaoShaMessage = document.querySelector(_elementConfig2.default.jdMiaoShaMessage);
+          var pattern = /预计(.*)开始/;
+          console.log(jdMiaoShaMessage.innerText);
+          if (pattern.test(jdMiaoShaMessage.innerText)) {
+            // have not started
+            var activityHour = RegExp.$1.split(":")[0];
+            var activityMinute = RegExp.$1.split(":")[1];
+            activityDate = new Date(serverDate.getUTCFullYear(), serverDate.getUTCMonth(), serverDate.getUTCDate(), parseInt(activityHour), parseInt(activityMinute));
+            var leftTime = activityDate.getTime() - serverDate.getTime();
+            console.log("left minutes:", leftTime / (1000 * 60));
+            setTimeout(resolve, 1000 * 10);
+          } else {
+            //have started
+            console.warn("活动已经开始");
+          }
+        }
+      });
+    }).then(function (values) {
+      console.log("detect price changing");
       var jdEasyBuyBtn = document.querySelector(_elementConfig2.default.jdEasyBuyBtn);
       var jdOnKeyBuyBtn = document.querySelector(_elementConfig2.default.jdOnKeyBuyBtn);
-      // if(jdEasyBuyBtn) {
-      //   console.log("jdEasyBuyBtn")
-      //   jdEasyBuyBtn.click()
-      // } else if(jdOnKeyBuyBtn) {
-      //   console.log("jdOnKeyBuyBtn")
-      //   jdOnKeyBuyBtn.click()
-      // } else {
-      //   alert("一键购按钮未加载")
-      //   console.log("jd easy buy btn , ", jdEasyBuyBtn, "jd on key buy btn, ", jdOnKeyBuyBtn)
-      //   return
-      // }
-    });
-    synchronisedTime("https://item.jd.com/2693720.html", function (date) {
-      serverDate = date;
-      console.log(serverDate);
-      console.log(document.querySelector(_elementConfig2.default.jdMiaoShaBanner));
-      var jdMiaoShaBanner = document.querySelector(_elementConfig2.default.jdMiaoShaBanner);
-      if (!jdMiaoShaBanner) {
-        alert("此商品不参与抢购活动");
+      if (jdEasyBuyBtn) {
+        console.log("jdEasyBuyBtn");
+        jdEasyBuyBtn.click();
+      } else if (jdOnKeyBuyBtn) {
+        console.log("jdOnKeyBuyBtn");
+        jdOnKeyBuyBtn.click();
+      } else {
+        alert("一键购按钮未加载");
+        console.log("jd easy buy btn , ", jdEasyBuyBtn, "jd on key buy btn, ", jdOnKeyBuyBtn);
         return;
       }
     });
