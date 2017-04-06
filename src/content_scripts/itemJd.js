@@ -53,7 +53,9 @@ export default {
             activityDate = new Date(serverDate.getUTCFullYear(), serverDate.getUTCMonth(), serverDate.getUTCDate(), parseInt(activityHour), parseInt(activityMinute))
             let leftTime = activityDate.getTime() - serverDate.getTime()
             console.log("left minutes:", leftTime/(1000 * 60))
-            setTimeout(resolve, 1000 * 10)
+            // NOTE: for test
+            // setTimeout(resolve, 1000 * 10)
+            setTimeout(resolve, leftTime)
           } else {
             //have started
             console.warn("活动已经开始")
