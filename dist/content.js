@@ -236,6 +236,12 @@ exports.default = {
     synchronisedTime("https://item.jd.com/2693720.html", function (date) {
       serverDate = date;
       console.log(serverDate);
+      console.log(document.querySelector(_elementConfig2.default.jdMiaoShaBanner));
+      var jdMiaoShaBanner = document.querySelector(_elementConfig2.default.jdMiaoShaBanner);
+      if (!jdMiaoShaBanner) {
+        alert("此商品不参与抢购活动");
+        return;
+      }
     });
   },
   onComplete: function onComplete() {

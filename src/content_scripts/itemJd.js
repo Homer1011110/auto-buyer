@@ -12,6 +12,8 @@ function synchronisedTime(url, callback) {
   xhr.send()
 }
 
+
+
 export default {
   onInteractive: function() {
     window.addEventListener("load", function() {
@@ -37,6 +39,12 @@ export default {
     synchronisedTime("https://item.jd.com/2693720.html", function(date) {
       serverDate = date
       console.log(serverDate)
+      console.log(document.querySelector(elements.jdMiaoShaBanner))
+      let jdMiaoShaBanner = document.querySelector(elements.jdMiaoShaBanner)
+      if(!jdMiaoShaBanner) {
+        alert("此商品不参与抢购活动")
+        return
+      }
     })
   },
   onComplete: function() {
