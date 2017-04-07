@@ -17,7 +17,8 @@ class ContentScript {
     let readyState = document.readyState
     console.log(readyState)
     for(var route in router) {
-      if(route.indexOf(hostname) > -1) {
+      if(route == hostname) {
+        //严格匹配
         matchTag = true
         switch (readyState) {
           case "interactive":

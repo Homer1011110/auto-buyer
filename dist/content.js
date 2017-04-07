@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -83,7 +83,11 @@ exports.default = {
   jdMiaoShaBanner: "#banner-miaosha", // 秒杀提示栏
   jdMiaoShaMessage: "#banner-miaosha .activity-message",
   jdPayPasswordInput: "#payPwd",
-  jdPaySubmitBtn: "#paySubmit"
+  jdPaySubmitBtn: "#paySubmit",
+  tbMiaoBtn: "#J_SecKill > div.tb-sec-kill-upper > div.tb-sk-btns > a",
+  tbMiaoAnswer: "#J_SecKill > table > tbody > tr.answer > td:nth-child(2) > input",
+  tbHeaderLoginLink: "#J_LoginInfoHd > a.h",
+  tbBuyBtn: "#J_juValid > div.tb-btn-buy > a"
 };
 
 /***/ }),
@@ -127,7 +131,8 @@ var ContentScript = function () {
       var readyState = document.readyState;
       console.log(readyState);
       for (var route in router) {
-        if (route.indexOf(hostname) > -1) {
+        if (route == hostname) {
+          //严格匹配
           matchTag = true;
           switch (readyState) {
             case "interactive":
@@ -285,8 +290,55 @@ exports.default = {
 };
 
 /***/ }),
-/* 4 */,
-/* 5 */
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _elementConfig = __webpack_require__(0);
+
+var _elementConfig2 = _interopRequireDefault(_elementConfig);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function checkActivity(delay) {
+  var tbMiaoBtn = document.querySelector(_elementConfig2.default.tbMiaoBtn);
+  if (tbMiaoBtn) {
+    pollClick(tbMiaoBtn, 10);
+  } else {
+    setTimeout(checkActivity, delay, delay);
+  }
+}
+
+function pollClick(btn, delay) {
+  btn.click();
+  // console.log(btn)
+  var tbMiaoAnswer = document.querySelector(_elementConfig2.default.tbMiaoAnswer);
+  if (tbMiaoAnswer) {
+    tbMiaoAnswer.focus();
+  } else {
+    setTimeout(pollClick, delay, btn, delay);
+  }
+}
+
+exports.default = {
+  onInteractive: function onInteractive() {
+    window.addEventListener("load", function () {
+      var tbMiaoBtn = document.querySelector(_elementConfig2.default.tbMiaoBtn);
+      checkActivity();
+    });
+  },
+  onComplete: function onComplete() {}
+};
+
+/***/ }),
+/* 5 */,
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -304,14 +356,94 @@ var _cashierJd = __webpack_require__(2);
 
 var _cashierJd2 = _interopRequireDefault(_cashierJd);
 
+var _miaoTB = __webpack_require__(4);
+
+var _miaoTB2 = _interopRequireDefault(_miaoTB);
+
+var _itemTB = __webpack_require__(8);
+
+var _itemTB2 = _interopRequireDefault(_itemTB);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = new _ContentScript2.default();
 
 app.route("item.jd.com", _itemJd2.default);
 app.route("cashier.jd.com", _cashierJd2.default);
+app.route("miao.item.taobao.com", _miaoTB2.default);
+app.route("item.taobao.com", _itemTB2.default);
 
 app.run();
+
+/***/ }),
+/* 7 */,
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _elementConfig = __webpack_require__(0);
+
+var _elementConfig2 = _interopRequireDefault(_elementConfig);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var serverDate = null;
+var activityDate = null;
+
+function synchronisedTime(url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", function (e) {
+    var date = new Date(this.getResponseHeader("date"));
+    callback.call(null, date);
+  });
+  xhr.open("get", url);
+  xhr.send();
+}
+
+exports.default = {
+  onInteractive: function onInteractive() {
+    var pOnload = new Promise(function (resolve, reject) {
+      window.addEventListener("load", function () {
+        console.log("onload");
+        resolve();
+      });
+    });
+    var pSynchronised = new Promise(function (resolve, reject) {
+      synchronisedTime("https://item.taobao.com/item.htm", function (date) {
+        serverDate = date;
+        console.log("synchronisedTime");
+        resolve();
+      });
+    });
+    Promise.all([pOnload, pSynchronised]).then(function () {
+      return new Promise(function (resolve, reject) {
+        console.log("onload & synchronisedTime done");
+        var tbHeaderLoginLink = document.querySelector(_elementConfig2.default.tbHeaderLoginLink);
+        if (tbHeaderLoginLink) {
+          alert("请先登录");
+          reject("please login first");
+          return;
+        }
+        resolve();
+      });
+    }).then(function (values) {
+      var tbBuyBtn = document.querySelector(_elementConfig2.default.tbBuyBtn);
+      console.log(tbBuyBtn);
+      setTimeout(function () {
+        tbBuyBtn.click();
+      }, 10 * 1000);
+    });
+  },
+  onComplete: function onComplete() {
+    // NOTE: window.onload will not be fired any more
+  }
+};
 
 /***/ })
 /******/ ]);

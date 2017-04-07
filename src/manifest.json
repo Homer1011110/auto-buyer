@@ -16,6 +16,7 @@
     {
       "matches": [
         "*://miao.item.taobao.com/*",
+        "*://item.taobao.com/*",
         "*://item.jd.com/*",
         "*://cashier.jd.com/*"
       ],

@@ -5,5 +5,9 @@ export default {
   jdMiaoShaBanner: "#banner-miaosha", // 秒杀提示栏
   jdMiaoShaMessage: "#banner-miaosha .activity-message",
   jdPayPasswordInput: "#payPwd",
-  jdPaySubmitBtn: "#paySubmit"
+  jdPaySubmitBtn: "#paySubmit",
+  tbMiaoBtn: "#J_SecKill > div.tb-sec-kill-upper > div.tb-sk-btns > a",
+  tbMiaoAnswer: "#J_SecKill > table > tbody > tr.answer > td:nth-child(2) > input",
+  tbHeaderLoginLink: "#J_LoginInfoHd > a.h",
+  tbBuyBtn: "#J_juValid > div.tb-btn-buy > a"
 }
