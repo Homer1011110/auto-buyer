@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -203,7 +203,13 @@ var _elementConfig = __webpack_require__(0);
 
 var _elementConfig2 = _interopRequireDefault(_elementConfig);
 
+var _infoBox = __webpack_require__(6);
+
+var _infoBox2 = _interopRequireDefault(_infoBox);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+console.log(_infoBox2.default);
 
 var serverDate = null;
 var activityDate = null;
@@ -306,93 +312,6 @@ var _elementConfig2 = _interopRequireDefault(_elementConfig);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function checkActivity(delay) {
-  var tbMiaoBtn = document.querySelector(_elementConfig2.default.tbMiaoBtn);
-  if (tbMiaoBtn) {
-    pollClick(tbMiaoBtn, 10);
-  } else {
-    setTimeout(checkActivity, delay, delay);
-  }
-}
-
-function pollClick(btn, delay) {
-  btn.click();
-  // console.log(btn)
-  var tbMiaoAnswer = document.querySelector(_elementConfig2.default.tbMiaoAnswer);
-  if (tbMiaoAnswer) {
-    tbMiaoAnswer.focus();
-  } else {
-    setTimeout(pollClick, delay, btn, delay);
-  }
-}
-
-exports.default = {
-  onInteractive: function onInteractive() {
-    window.addEventListener("load", function () {
-      var tbMiaoBtn = document.querySelector(_elementConfig2.default.tbMiaoBtn);
-      checkActivity();
-    });
-  },
-  onComplete: function onComplete() {}
-};
-
-/***/ }),
-/* 5 */,
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _ContentScript = __webpack_require__(1);
-
-var _ContentScript2 = _interopRequireDefault(_ContentScript);
-
-var _itemJd = __webpack_require__(3);
-
-var _itemJd2 = _interopRequireDefault(_itemJd);
-
-var _cashierJd = __webpack_require__(2);
-
-var _cashierJd2 = _interopRequireDefault(_cashierJd);
-
-var _miaoTB = __webpack_require__(4);
-
-var _miaoTB2 = _interopRequireDefault(_miaoTB);
-
-var _itemTB = __webpack_require__(8);
-
-var _itemTB2 = _interopRequireDefault(_itemTB);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var app = new _ContentScript2.default();
-
-app.route("item.jd.com", _itemJd2.default);
-app.route("cashier.jd.com", _cashierJd2.default);
-app.route("miao.item.taobao.com", _miaoTB2.default);
-app.route("item.taobao.com", _itemTB2.default);
-
-app.run();
-
-/***/ }),
-/* 7 */,
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _elementConfig = __webpack_require__(0);
-
-var _elementConfig2 = _interopRequireDefault(_elementConfig);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 var serverDate = null;
 var activityDate = null;
 
@@ -444,6 +363,98 @@ exports.default = {
     // NOTE: window.onload will not be fired any more
   }
 };
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _elementConfig = __webpack_require__(0);
+
+var _elementConfig2 = _interopRequireDefault(_elementConfig);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function checkActivity(delay) {
+  var tbMiaoBtn = document.querySelector(_elementConfig2.default.tbMiaoBtn);
+  if (tbMiaoBtn) {
+    pollClick(tbMiaoBtn, 10);
+  } else {
+    setTimeout(checkActivity, delay, delay);
+  }
+}
+
+function pollClick(btn, delay) {
+  btn.click();
+  // console.log(btn)
+  var tbMiaoAnswer = document.querySelector(_elementConfig2.default.tbMiaoAnswer);
+  if (tbMiaoAnswer) {
+    tbMiaoAnswer.focus();
+  } else {
+    setTimeout(pollClick, delay, btn, delay);
+  }
+}
+
+exports.default = {
+  onInteractive: function onInteractive() {
+    window.addEventListener("load", function () {
+      var tbMiaoBtn = document.querySelector(_elementConfig2.default.tbMiaoBtn);
+      checkActivity();
+    });
+  },
+  onComplete: function onComplete() {}
+};
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"homer-info-box\">\r\n    \r\n</div>\r\n";
+
+/***/ }),
+/* 7 */,
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _ContentScript = __webpack_require__(1);
+
+var _ContentScript2 = _interopRequireDefault(_ContentScript);
+
+var _itemJd = __webpack_require__(3);
+
+var _itemJd2 = _interopRequireDefault(_itemJd);
+
+var _cashierJd = __webpack_require__(2);
+
+var _cashierJd2 = _interopRequireDefault(_cashierJd);
+
+var _miaoTB = __webpack_require__(5);
+
+var _miaoTB2 = _interopRequireDefault(_miaoTB);
+
+var _itemTB = __webpack_require__(4);
+
+var _itemTB2 = _interopRequireDefault(_itemTB);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var app = new _ContentScript2.default();
+
+app.route("item.jd.com", _itemJd2.default);
+app.route("cashier.jd.com", _cashierJd2.default);
+app.route("miao.item.taobao.com", _miaoTB2.default);
+app.route("item.taobao.com", _itemTB2.default);
+
+app.run();
 
 /***/ })
 /******/ ]);

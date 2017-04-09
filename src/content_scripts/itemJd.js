@@ -1,4 +1,6 @@
 import elements from "./elementConfig"
+import infoBox from "./infoBox.html"
+console.log(infoBox)
 
 let serverDate = null
 let activityDate = null

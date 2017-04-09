@@ -59,6 +59,13 @@ const config = {
         options: {
           presets: ["es2015"]
         }
+      },
+      {
+        test: /\.html$/,
+        loader: "html-loader",
+        options: {
+          attrs: false
+        }
       }
     ]
   },
