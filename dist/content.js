@@ -227,10 +227,34 @@ var ItemJdScript = function (_BaseScript) {
   function ItemJdScript(option) {
     _classCallCheck(this, ItemJdScript);
 
-    return _possibleConstructorReturn(this, (ItemJdScript.__proto__ || Object.getPrototypeOf(ItemJdScript)).call(this, option));
+    var _this = _possibleConstructorReturn(this, (ItemJdScript.__proto__ || Object.getPrototypeOf(ItemJdScript)).call(this, option));
+
+    var pattern = /item\.jd\.com\/(\d*)\.html/;
+    if (pattern.test(window.location.href)) {
+      _this.skuId = RegExp.$1;
+      console.log("jd skuId: ", _this.skuId);
+    } else {
+      console.warn("url: ${window.location.href} not match item.jd.com/xxxxx.html");
+    }
+    return _this;
   }
 
   _createClass(ItemJdScript, [{
+    key: "checkPriceChange",
+    value: function checkPriceChange(succeed, fail) {
+      this.getPrice();
+    }
+  }, {
+    key: "getPrice",
+    value: function getPrice(succeed) {
+      var xhr = new XMLHttpRequest();
+      xhr.onload = function (e) {
+        console.log(this.responseText);
+      };
+      xhr.open("get", window.location.protocol + "//p.3.cn/prices/mgets?skuIds=J_" + this.skuId);
+      xhr.send();
+    }
+  }, {
     key: "onLoadAndSynchronise",
     value: function onLoadAndSynchronise() {
       var self = this;
@@ -242,30 +266,31 @@ var ItemJdScript = function (_BaseScript) {
           reject("didn't login");
           return;
         }
-        var jdMiaoShaBanner = document.querySelector(_elementConfig2.default.jdMiaoShaBanner);
-        if (!jdMiaoShaBanner) {
-          alert("此商品不参与抢购活动");
-          reject("have no activity");
-          return;
-        } else {
-          var jdMiaoShaMessage = document.querySelector(_elementConfig2.default.jdMiaoShaMessage);
-          var pattern = /预计(.*)开始/;
-          console.log(jdMiaoShaMessage.innerText);
-          if (pattern.test(jdMiaoShaMessage.innerText)) {
-            // have not started
-            var acH = RegExp.$1.split(":")[0];
-            var acM = RegExp.$1.split(":")[1];
-            // activityDate = new Date(serverDate.getUTCFullYear(), serverDate.getUTCMonth(), serverDate.getUTCDate(), parseInt(activityHour), parseInt(activityMinute))
-            // let leftTime = activityDate.getTime() - serverDate.getTime()
-            // console.log("left minutes:", leftTime/(1000 * 60))
-            // NOTE: for test
-            // setTimeout(resolve, 1000 * 10)
-            // self.countdownTimer = setTimeout(resolve, leftTime)
-          } else {
-            //have started
-            console.warn("活动已经开始");
-          }
-        }
+        resolve();
+        // let jdMiaoShaBanner = document.querySelector(elements.jdMiaoShaBanner)
+        // if(!jdMiaoShaBanner) {
+        //   alert("此商品不参与抢购活动")
+        //   reject("have no activity")
+        //   return
+        // } else {
+        //   let jdMiaoShaMessage = document.querySelector(elements.jdMiaoShaMessage)
+        //   let pattern = /预计(.*)开始/
+        //   console.log(jdMiaoShaMessage.innerText)
+        //   if(pattern.test(jdMiaoShaMessage.innerText)) {
+        //     // have not started
+        //     let acH = RegExp.$1.split(":")[0]
+        //     let acM = RegExp.$1.split(":")[1]
+        //     // activityDate = new Date(serverDate.getUTCFullYear(), serverDate.getUTCMonth(), serverDate.getUTCDate(), parseInt(activityHour), parseInt(activityMinute))
+        //     // let leftTime = activityDate.getTime() - serverDate.getTime()
+        //     // console.log("left minutes:", leftTime/(1000 * 60))
+        //     // NOTE: for test
+        //     // setTimeout(resolve, 1000 * 10)
+        //     // self.countdownTimer = setTimeout(resolve, leftTime)
+        //   } else {
+        //     //have started
+        //     console.warn("活动已经开始")
+        //   }
+        // }
       });
     }
   }, {
@@ -444,12 +469,15 @@ var BaseScript = function () {
     this.settingTime = null;
     this.synchronisedUrl = option.synchronisedUrl;
     this.countdownTimer = null;
+    this.oldPrice = null;
     // NOTE: 计时器，用来同步显示服务器时间
     this.serverTimer = null;
     // NOTE: cache dom for unncessary dom query
     this.shadowRoot = null;
     this.shadowServerTime = null;
     this.shadowLeftTime = null;
+    // NOTE:
+    this.isCheckingPrice = false;
   }
 
   _createClass(BaseScript, [{
@@ -548,8 +576,23 @@ var BaseScript = function () {
         _this2.serverTime += 1000;
         _this2.updateServerTime();
       }, 1000);
+      if (this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 15 * 1000) {
+        this.isCheckingPrice = true;
+        this.checkPriceChange();
+      }
       return this;
     }
+  }, {
+    key: "checkPriceChange",
+    value: function checkPriceChange(succeed, fail) {
+      // NOTE: implement by subclass
+    }
+  }, {
+    key: "onPriceChange",
+    value: function onPriceChange() {}
+  }, {
+    key: "onCheckTimeout",
+    value: function onCheckTimeout() {}
   }, {
     key: "onInteractive",
     value: function onInteractive() {
@@ -572,7 +615,8 @@ var BaseScript = function () {
       Promise.all([pOnload, pSynchronised]).then(function () {
         _this3.insertInfoBox().updateServerTime();
         return _this3.onLoadAndSynchronise();
-      }).then(this.onActivityStart.bind(this));
+      });
+      // .then(this.onActivityStart.bind(this))
     }
   }, {
     key: "onComplete",
@@ -581,12 +625,12 @@ var BaseScript = function () {
     key: "onLoadAndSynchronise",
     value: function onLoadAndSynchronise() {
       // NOTE: interface implement by subclass
-      // NOTE: this method will be called when onLoadAndSynchronise's promise is resolved
     }
   }, {
     key: "onActivityStart",
     value: function onActivityStart() {
       // NOTE: interface implement by subclass
+      // NOTE: this method will be called when onLoadAndSynchronise's promise is resolved
     }
   }]);
 

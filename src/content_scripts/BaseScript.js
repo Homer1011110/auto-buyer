@@ -8,12 +8,15 @@ class BaseScript {
     this.settingTime = null
     this.synchronisedUrl = option.synchronisedUrl
     this.countdownTimer = null
+    this.oldPrice = null
     // NOTE: 计时器，用来同步显示服务器时间
     this.serverTimer = null
     // NOTE: cache dom for unncessary dom query
     this.shadowRoot = null
     this.shadowServerTime = null
     this.shadowLeftTime = null
+    // NOTE:
+    this.isCheckingPrice = false
   }
   synchronisedTime(url, callback) {
     let self = this
@@ -97,7 +100,20 @@ class BaseScript {
       this.serverTime += 1000
       this.updateServerTime()
     }, 1000)
+    if(this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 15 * 1000) {
+      this.isCheckingPrice = true
+      this.checkPriceChange()
+    }
     return this
+  }
+  checkPriceChange(succeed, fail) {
+    // NOTE: implement by subclass
+  }
+  onPriceChange() {
+
+  }
+  onCheckTimeout() {
+
   }
   onInteractive() {
     let self = this
@@ -119,17 +135,17 @@ class BaseScript {
         this.insertInfoBox().updateServerTime()
         return this.onLoadAndSynchronise()
       })
-      .then(this.onActivityStart.bind(this))
+      // .then(this.onActivityStart.bind(this))
   }
   onComplete() {
 
   }
   onLoadAndSynchronise() {
     // NOTE: interface implement by subclass
-    // NOTE: this method will be called when onLoadAndSynchronise's promise is resolved
   }
   onActivityStart() {
     // NOTE: interface implement by subclass
+    // NOTE: this method will be called when onLoadAndSynchronise's promise is resolved
   }
 }
 
