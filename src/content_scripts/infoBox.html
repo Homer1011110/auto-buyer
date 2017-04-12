@@ -1,3 +1,53 @@
 <div class="homer-info-box">
-    
+  <div class="homer-line">
+    <span class="homer-text">服务器时间：</span>
+    <span id="homer-server-time" class="homer-text"></span>
+  </div>
+  <div class="homer-line">
+    <span class="homer-text">选择抢购时间：</span>
+    <input id="homer-time-picker" type="time"/>
+    <span id="homer-setting-time" class="homer-text homer-hide"></span>
+  </div>
+  <div id="homer-left-time-div" class="homer-line homer-hide">
+    <span class="homer-text">抢购倒计时：</span>
+    <span id="homer-left-time" class="homer-text homer-red"></span>
+  </div>
+  <div class="homer-line homer-align-center">
+    <button id="homer-start-btn" class="homer-btn">开始定时购买</button>
+    <button id="homer-cancel-btn" class="homer-btn homer-hide">取消定时购买</button>
+  </div>
 </div>
+<style>
+  .homer-text {
+    color: white;
+    font-size: 16px;
+  }
+  .homer-red {
+    color: #db0f31;
+  }
+  .homer-hide {
+    display: none;
+  }
+  .homer-align-center {
+    text-align: center;
+  }
+  .homer-info-box {
+    padding: 10px 20px;
+    position: fixed;
+    left: 100px;
+    top: 100px;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  .homer-line:not(:last-child) {
+    margin-bottom: 10px;
+  }
+  .homer-btn {
+    border-radius: 5px;
+    padding: 5px 10px;
+    border: 0;
+    outline: none;
+    background-color: #4cafe8;
+    color: #fff;
+  }
+</style>

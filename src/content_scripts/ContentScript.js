@@ -22,10 +22,10 @@ class ContentScript {
         matchTag = true
         switch (readyState) {
           case "interactive":
-            router[route].onInteractive.apply(this)
+            router[route].onInteractive()
             break
           case "complete":
-            router[route].onComplete.apply(this)
+            router[route].onComplete()
             break
         }
 
