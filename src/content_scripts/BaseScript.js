@@ -31,9 +31,10 @@ class BaseScript {
   }
   insertInfoBox() {
     let div = document.createElement("div")
+    div.id = "homer-extension"
     this.shadowRoot = div.attachShadow({mode: "open"})
     this.shadowRoot.innerHTML = infoBox
-    document.body.append(div)
+    document.body.appendChild(div)
     this.shadowServerTime = this.shadowRoot.querySelector("#homer-server-time")
     this.shadowLeftTime = this.shadowRoot.querySelector("#homer-left-time")
     let timePicker = this.shadowRoot.querySelector("#homer-time-picker")
@@ -61,7 +62,6 @@ class BaseScript {
       settingDate.setSeconds(0)
       settingDate.setMilliseconds(0)
       this.settingTime = settingDate.getTime()
-      let diff = settingDate.getTime() - this.serverTime
     }
     cancelBtn.onclick = (e)=>{
       timePicker.classList.remove("homer-hide")
@@ -79,8 +79,10 @@ class BaseScript {
       this.shadowServerTime.innerText = this.normalizeTime(this.serverTime)
     }
     if(!this.settingTime) return
-    let leftTime = this.settingTime - this.serverTime - 8 * 60 * 60 * 1000
-    this.shadowLeftTime.innerText = this.normalizeTime(leftTime)
+    let leftTime = this.settingTime - this.serverTime
+    if(leftTime >= 0) {
+      this.shadowLeftTime.innerText = this.normalizeTime(leftTime - 8 * 60 * 60 * 1000)
+    }
   }
   normalizeTime(millisecond) {
     millisecond += 8 * 60 * 60 * 1000 // 中国时区补正
@@ -100,7 +102,7 @@ class BaseScript {
       this.serverTime += 1000
       this.updateServerTime()
     }, 1000)
-    if(this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 15 * 1000) {
+    if(this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 30 * 1000) {
       this.isCheckingPrice = true
       this.checkPriceChange()
     }

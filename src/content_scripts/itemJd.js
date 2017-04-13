@@ -12,21 +12,50 @@ class ItemJdScript extends BaseScript {
     let pattern = /item\.jd\.com\/(\d*)\.html/
     if(pattern.test(window.location.href)) {
       this.skuId = RegExp.$1
-      console.log("jd skuId: ", this.skuId)
     } else {
       console.warn("url: ${window.location.href} not match item.jd.com/xxxxx.html")
     }
   }
-  checkPriceChange(succeed, fail) {
-    this.getPrice()
+  checkPriceChange() {
+    setInterval(this.getPrice.bind(this), 1000)
   }
-  getPrice(succeed) {
-    let xhr = new XMLHttpRequest()
-    xhr.onload = function(e) {
-      console.log(this.responseText)
-    }
-    xhr.open("get", window.location.protocol + "//p.3.cn/prices/mgets?skuIds=J_" + this.skuId)
-    xhr.send()
+  getPrice() {
+    let script = document.createElement("script")
+    let callbackRandom = Math.random().toString().substring(2)
+    script.setAttribute("data-homer-jsonp", callbackRandom)
+    script.src = `${window.location.protocol}//p.3.cn/prices/mgets?skuIds=J_${this.skuId}&callback=homer${callbackRandom}`
+    document.head.appendChild(script)
+    let jsonpHandler = document.createElement("script")
+    jsonpHandler.setAttribute("data-homer-handler", callbackRandom)
+    jsonpHandler.innerHTML = `
+      window.homer${callbackRandom} = function(data) {
+        //console.log(data[0], typeof data[0].p)
+        let homerExtension = document.querySelector("#homer-extension")
+        if(homerExtension.hasAttribute("homer-price")) {
+          if(homerExtension.getAttribute("homer-price") != data[0].p) {
+            console.warn("click easybuy btn !!!")
+            let easyBuyBtn = document.querySelector("#btn-easybuy-submit")
+            let keyBuyBtn = document.querySelector("#btn-onkeybuy")
+            if(easyBuyBtn) {
+              easyBuyBtn.click()
+            } else if(keyBuyBtn) {
+              keyBuyBtn.click()
+            } else {
+              console.error("cannot find easybuy btn")
+            }
+          } else {
+            console.log("price: ", data[0].p)
+          }
+        } else {
+          homerExtension.setAttribute("homer-price", data[0].p)
+        }
+        let jsonpScript = document.head.querySelector("[data-homer-jsonp='${callbackRandom}']")
+        let jsonpHandler = document.head.querySelector("[data-homer-handler='${callbackRandom}']")
+        document.head.removeChild(jsonpScript)
+        delete window.homer${callbackRandom}
+      }
+    `
+    document.head.appendChild(jsonpHandler)
   }
   onLoadAndSynchronise() {
     let self = this

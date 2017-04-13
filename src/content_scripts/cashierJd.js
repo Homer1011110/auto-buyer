@@ -9,7 +9,7 @@ export default {
         alert(`element not exist: payPasswordInput--${jdPayPasswordInput}, jdPaySubmitBtn--${jdPaySubmitBtn}`)
         return
       }
-      jdPayPasswordInput.value = "xxxxx"
+      jdPayPasswordInput.value = "password"
       jdPaySubmitBtn.click()
     })
   },

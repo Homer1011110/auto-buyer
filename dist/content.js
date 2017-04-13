@@ -181,7 +181,7 @@ exports.default = {
         alert("element not exist: payPasswordInput--" + jdPayPasswordInput + ", jdPaySubmitBtn--" + jdPaySubmitBtn);
         return;
       }
-      jdPayPasswordInput.value = "xxxxx";
+      jdPayPasswordInput.value = "wsh940805";
       jdPaySubmitBtn.click();
     });
   },
@@ -232,7 +232,6 @@ var ItemJdScript = function (_BaseScript) {
     var pattern = /item\.jd\.com\/(\d*)\.html/;
     if (pattern.test(window.location.href)) {
       _this.skuId = RegExp.$1;
-      console.log("jd skuId: ", _this.skuId);
     } else {
       console.warn("url: ${window.location.href} not match item.jd.com/xxxxx.html");
     }
@@ -241,18 +240,21 @@ var ItemJdScript = function (_BaseScript) {
 
   _createClass(ItemJdScript, [{
     key: "checkPriceChange",
-    value: function checkPriceChange(succeed, fail) {
-      this.getPrice();
+    value: function checkPriceChange() {
+      setInterval(this.getPrice.bind(this), 1000);
     }
   }, {
     key: "getPrice",
-    value: function getPrice(succeed) {
-      var xhr = new XMLHttpRequest();
-      xhr.onload = function (e) {
-        console.log(this.responseText);
-      };
-      xhr.open("get", window.location.protocol + "//p.3.cn/prices/mgets?skuIds=J_" + this.skuId);
-      xhr.send();
+    value: function getPrice() {
+      var script = document.createElement("script");
+      var callbackRandom = Math.random().toString().substring(2);
+      script.setAttribute("data-homer-jsonp", callbackRandom);
+      script.src = window.location.protocol + "//p.3.cn/prices/mgets?skuIds=J_" + this.skuId + "&callback=homer" + callbackRandom;
+      document.head.appendChild(script);
+      var jsonpHandler = document.createElement("script");
+      jsonpHandler.setAttribute("data-homer-handler", callbackRandom);
+      jsonpHandler.innerHTML = "\n      window.homer" + callbackRandom + " = function(data) {\n        //console.log(data[0], typeof data[0].p)\n        let homerExtension = document.querySelector(\"#homer-extension\")\n        if(homerExtension.hasAttribute(\"homer-price\")) {\n          if(homerExtension.getAttribute(\"homer-price\") != data[0].p) {\n            console.warn(\"click easybuy btn !!!\")\n            let easyBuyBtn = document.querySelector(\"#btn-easybuy-submit\")\n            let keyBuyBtn = document.querySelector(\"#btn-onkeybuy\")\n            if(easyBuyBtn) {\n              easyBuyBtn.click()\n            } else if(keyBuyBtn) {\n              keyBuyBtn.click()\n            } else {\n              console.error(\"cannot find easybuy btn\")\n            }\n          } else {\n            console.log(\"price: \", data[0].p)\n          }\n        } else {\n          homerExtension.setAttribute(\"homer-price\", data[0].p)\n        }\n        let jsonpScript = document.head.querySelector(\"[data-homer-jsonp='" + callbackRandom + "']\")\n        let jsonpHandler = document.head.querySelector(\"[data-homer-handler='" + callbackRandom + "']\")\n        document.head.removeChild(jsonpScript)\n        delete window.homer" + callbackRandom + "\n      }\n    ";
+      document.head.appendChild(jsonpHandler);
     }
   }, {
     key: "onLoadAndSynchronise",
@@ -499,9 +501,10 @@ var BaseScript = function () {
       var _this = this;
 
       var div = document.createElement("div");
+      div.id = "homer-extension";
       this.shadowRoot = div.attachShadow({ mode: "open" });
       this.shadowRoot.innerHTML = _infoBox2.default;
-      document.body.append(div);
+      document.body.appendChild(div);
       this.shadowServerTime = this.shadowRoot.querySelector("#homer-server-time");
       this.shadowLeftTime = this.shadowRoot.querySelector("#homer-left-time");
       var timePicker = this.shadowRoot.querySelector("#homer-time-picker");
@@ -529,7 +532,6 @@ var BaseScript = function () {
         settingDate.setSeconds(0);
         settingDate.setMilliseconds(0);
         _this.settingTime = settingDate.getTime();
-        var diff = settingDate.getTime() - _this.serverTime;
       };
       cancelBtn.onclick = function (e) {
         timePicker.classList.remove("homer-hide");
@@ -549,8 +551,10 @@ var BaseScript = function () {
         this.shadowServerTime.innerText = this.normalizeTime(this.serverTime);
       }
       if (!this.settingTime) return;
-      var leftTime = this.settingTime - this.serverTime - 8 * 60 * 60 * 1000;
-      this.shadowLeftTime.innerText = this.normalizeTime(leftTime);
+      var leftTime = this.settingTime - this.serverTime;
+      if (leftTime >= 0) {
+        this.shadowLeftTime.innerText = this.normalizeTime(leftTime - 8 * 60 * 60 * 1000);
+      }
     }
   }, {
     key: "normalizeTime",
@@ -576,7 +580,7 @@ var BaseScript = function () {
         _this2.serverTime += 1000;
         _this2.updateServerTime();
       }, 1000);
-      if (this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 15 * 1000) {
+      if (this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 30 * 1000) {
         this.isCheckingPrice = true;
         this.checkPriceChange();
       }
