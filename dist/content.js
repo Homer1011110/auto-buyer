@@ -181,7 +181,7 @@ exports.default = {
         alert("element not exist: payPasswordInput--" + jdPayPasswordInput + ", jdPaySubmitBtn--" + jdPaySubmitBtn);
         return;
       }
-      jdPayPasswordInput.value = "wsh940805";
+      jdPayPasswordInput.value = "940628";
       jdPaySubmitBtn.click();
     });
   },
@@ -204,6 +204,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _elementConfig = __webpack_require__(0);
 
 var _elementConfig2 = _interopRequireDefault(_elementConfig);
+
+var _cookie = __webpack_require__(11);
+
+var _cookie2 = _interopRequireDefault(_cookie);
 
 var _BaseScript2 = __webpack_require__(6);
 
@@ -246,10 +250,14 @@ var ItemJdScript = function (_BaseScript) {
   }, {
     key: "getPrice",
     value: function getPrice() {
+      var e = _cookie2.default.get("__jda"),
+          t = "";
+      e && e.indexOf(".") > -1 && (t = e.split(".")[1]);
+
       var script = document.createElement("script");
       var callbackRandom = Math.random().toString().substring(2);
       script.setAttribute("data-homer-jsonp", callbackRandom);
-      script.src = window.location.protocol + "//p.3.cn/prices/mgets?skuIds=J_" + this.skuId + "&callback=homer" + callbackRandom;
+      script.src = window.location.protocol + "//p.3.cn/prices/mgets?skuIds=J_" + this.skuId + "&pduid=" + t + "&callback=homer" + callbackRandom;
       document.head.appendChild(script);
       var jsonpHandler = document.createElement("script");
       jsonpHandler.setAttribute("data-homer-handler", callbackRandom);
@@ -574,13 +582,12 @@ var BaseScript = function () {
     value: function updateServerTime() {
       var _this2 = this;
 
-      // let serverTimeString = this.normalizeTime(this.serverTime)
       this.updateInfoBox();
       this.serverTimer = setTimeout(function () {
         _this2.serverTime += 1000;
         _this2.updateServerTime();
       }, 1000);
-      if (this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 30 * 1000) {
+      if (this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 60 * 1000) {
         this.isCheckingPrice = true;
         this.checkPriceChange();
       }
@@ -618,7 +625,7 @@ var BaseScript = function () {
       });
       Promise.all([pOnload, pSynchronised]).then(function () {
         _this3.insertInfoBox().updateServerTime();
-        return _this3.onLoadAndSynchronise();
+        // return this.onLoadAndSynchronise()
       });
       // .then(this.onActivityStart.bind(this))
     }
@@ -687,6 +694,50 @@ app.route("miao.item.taobao.com", _miaoTB2.default);
 app.route("item.taobao.com", _itemTB2.default);
 
 app.run();
+
+/***/ }),
+/* 10 */,
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cookie = function () {
+  function Cookie() {
+    _classCallCheck(this, Cookie);
+  }
+
+  _createClass(Cookie, [{
+    key: "get",
+    value: function get(name) {
+      var cookieName = encodeURIComponent(name) + "=",
+          cookieStart = document.cookie.indexOf(cookieName),
+          cookieValue = null;
+      if (cookieStart > -1) {
+        var cookieEnd = document.cookie.indexOf(";", cookieStart);
+        if (cookieEnd == -1) {
+          cookieEnd = document.cookie.length;
+        }
+        cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd));
+      }
+      return cookieValue;
+    }
+  }]);
+
+  return Cookie;
+}();
+
+var cookie = new Cookie();
+exports.default = cookie;
 
 /***/ })
 /******/ ]);

@@ -1,3 +1,3 @@
 export default {
-  payPassword: "wsh940805"
+  payPassword: "xxxxx"
 }

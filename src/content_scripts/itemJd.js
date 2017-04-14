@@ -1,5 +1,5 @@
 import elements from "./elementConfig"
-
+import cookie from "../util/cookie"
 import BaseScript from "./BaseScript"
 
 let scriptOption = {
@@ -20,10 +20,13 @@ class ItemJdScript extends BaseScript {
     setInterval(this.getPrice.bind(this), 1000)
   }
   getPrice() {
+    let e = cookie.get("__jda"), t = ""
+    e && e.indexOf(".") > -1 && (t = e.split(".")[1])
+
     let script = document.createElement("script")
     let callbackRandom = Math.random().toString().substring(2)
     script.setAttribute("data-homer-jsonp", callbackRandom)
-    script.src = `${window.location.protocol}//p.3.cn/prices/mgets?skuIds=J_${this.skuId}&callback=homer${callbackRandom}`
+    script.src = `${window.location.protocol}//p.3.cn/prices/mgets?skuIds=J_${this.skuId}&pduid=${t}&callback=homer${callbackRandom}`
     document.head.appendChild(script)
     let jsonpHandler = document.createElement("script")
     jsonpHandler.setAttribute("data-homer-handler", callbackRandom)

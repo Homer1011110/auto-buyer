@@ -1,5 +1,6 @@
 #ignore all node modules
 node_modules/
+jdSrc/
 spider.js
 temp.js
 test.js

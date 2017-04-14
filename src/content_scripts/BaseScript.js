@@ -96,13 +96,12 @@ class BaseScript {
     return `${h} : ${m} : ${s}`
   }
   updateServerTime() {
-    // let serverTimeString = this.normalizeTime(this.serverTime)
     this.updateInfoBox()
     this.serverTimer = setTimeout(()=>{
       this.serverTime += 1000
       this.updateServerTime()
     }, 1000)
-    if(this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 30 * 1000) {
+    if(this.settingTime && !this.isCheckingPrice && this.settingTime - this.serverTime < 60 * 1000) {
       this.isCheckingPrice = true
       this.checkPriceChange()
     }
@@ -135,7 +134,7 @@ class BaseScript {
     Promise.all([pOnload, pSynchronised])
       .then(()=>{
         this.insertInfoBox().updateServerTime()
-        return this.onLoadAndSynchronise()
+        // return this.onLoadAndSynchronise()
       })
       // .then(this.onActivityStart.bind(this))
   }
