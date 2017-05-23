@@ -3,17 +3,17 @@ import cookie from "../util/cookie"
 import BaseScript from "./BaseScript"
 
 let scriptOption = {
-  synchronisedUrl: "http://miao.item.taobao.com/550572544447.htm"
+  synchronisedUrl: "http://item.mi.com/product/10000041.html"
 }
 
-class ItemTaobaoScript extends BaseScript {
+class ItemMiScript extends BaseScript {
   constructor(option) {
     super(option)
-    let pattern = /item\.taobao\.com\/(\d*)\.htm/
+    let pattern = /item\.mi\.com\/(\d*)\.html/
     if(pattern.test(window.location.href)) {
       this.skuId = RegExp.$1
     } else {
-      console.warn(`url: ${window.location.href} not match item.taobao.com/xxxxx.html`)
+      console.warn(`url: ${window.location.href} not match item.mi.com/xxxxx.html`)
     }
   }
   checkPriceChange() {
@@ -115,6 +115,6 @@ class ItemTaobaoScript extends BaseScript {
   }
 }
 
-let itemTaobao = new ItemTaobaoScript(scriptOption)
+let itemMi = new ItemMiScript(scriptOption)
 
-export default itemTaobao
+export default itemMi

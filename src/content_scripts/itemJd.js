@@ -13,7 +13,7 @@ class ItemJdScript extends BaseScript {
     if(pattern.test(window.location.href)) {
       this.skuId = RegExp.$1
     } else {
-      console.warn("url: ${window.location.href} not match item.jd.com/xxxxx.html")
+      console.warn(`url: ${window.location.href} not match item.jd.com/xxxxx.html`)
     }
   }
   checkPriceChange() {
@@ -116,4 +116,9 @@ class ItemJdScript extends BaseScript {
 }
 
 let itemJd = new ItemJdScript(scriptOption)
+
+chrome.runtime.sendMessage({action: "getCookie"}, function(response) {
+  console.log(response.farewell)
+})
+
 export default itemJd

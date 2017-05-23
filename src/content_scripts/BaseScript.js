@@ -18,6 +18,10 @@ class BaseScript {
     // NOTE:
     this.isCheckingPrice = false
   }
+  checkLoginState(resolve, reject) {
+
+  }
+  getCookie(resolve, reject) {}
   synchronisedTime(url, callback) {
     let self = this
     let xhr = new XMLHttpRequest()
@@ -110,16 +114,15 @@ class BaseScript {
   checkPriceChange(succeed, fail) {
     // NOTE: implement by subclass
   }
-  onPriceChange() {
-
-  }
-  onCheckTimeout() {
-
-  }
+  onPriceChange() {}
+  onCheckTimeout() {}
   onInteractive() {
     let self = this
-    console.log("BaseScript onInteractive this:", this)
-    let pOnload = new Promise(function(resolve, reject) {
+    window.addEventListener("load", function() {
+      new Promise(self.checkLoginState)
+      .then(self.getCookie)
+    })
+    /*let pOnload = new Promise(function(resolve, reject) {
       window.addEventListener("load", function() {
         console.log("onload")
         resolve()
@@ -132,11 +135,9 @@ class BaseScript {
       })
     })
     Promise.all([pOnload, pSynchronised])
-      .then(()=>{
-        this.insertInfoBox().updateServerTime()
-        // return this.onLoadAndSynchronise()
-      })
-      // .then(this.onActivityStart.bind(this))
+    .then(()=>{
+      this.insertInfoBox().updateServerTime()
+    })*/
   }
   onComplete() {
 

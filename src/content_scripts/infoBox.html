@@ -1,18 +1,44 @@
 <div class="homer-info-box">
-  <div class="homer-line">
-    <span class="homer-text">服务器时间：</span>
-    <span id="homer-server-time" class="homer-text"></span>
+  <div style="color: white; font-weight: bold; margin-bottom: 10px;">
+      自动抢购器
   </div>
-  <div class="homer-line">
-    <span class="homer-text">选择抢购时间：</span>
-    <input id="homer-time-picker" type="time"/>
-    <span id="homer-setting-time" class="homer-text homer-hide"></span>
+  <div class="homer-hide" style="color: white;">登录京东后才能使用本软件</div>
+  <div class="homer-hide">
+    <div class="homer-line">
+      <span class="homer-text">服务器时间：</span>
+      <span id="homer-server-time" class="homer-text"></span>
+    </div>
+    <div class="homer-line homer-hide">
+      <span class="homer-text">选择抢购时间：</span>
+      <input id="homer-time-picker" type="time"/>
+      <span id="homer-setting-time" class="homer-text homer-hide"></span>
+    </div>
+    <div id="homer-left-time-div" class="homer-line homer-hide">
+      <span class="homer-text">抢购倒计时：</span>
+      <span id="homer-left-time" class="homer-text homer-red"></span>
+    </div>
   </div>
-  <div id="homer-left-time-div" class="homer-line homer-hide">
-    <span class="homer-text">抢购倒计时：</span>
-    <span id="homer-left-time" class="homer-text homer-red"></span>
+  <div class="homer-form homer-hide">
+    <div class="homer-form-item">
+      <span>收货人姓名</span><input placeholder="张三"/>
+    </div>
+    <div class="homer-form-item">
+      <span>收货人电话</span><input placeholder="13511111111"/>
+    </div>
+    <div class="homer-form-item">
+      <span>收货省份</span><input placeholder="湖北"/>
+    </div>
+    <div class="homer-form-item">
+      <span>收货城市</span><input placeholder="武汉"/>
+    </div>
+    <div class="homer-form-item">
+      <span>收货地址</span><input  placeholder="华中科技大学韵苑23栋"/>
+    </div>
+    <div class="homer-form-item">
+      <span>活动开始时间</span><input type="time"/>
+    </div>
   </div>
-  <div class="homer-line homer-align-center">
+  <div class="homer-line homer-align-center homer-hide">
     <button id="homer-start-btn" class="homer-btn">开始定时购买</button>
     <button id="homer-cancel-btn" class="homer-btn homer-hide">取消定时购买</button>
   </div>
@@ -37,7 +63,8 @@
     left: 100px;
     top: 100px;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    z-index: 99999999;
+    font-size: 14px;
   }
   .homer-line:not(:last-child) {
     margin-bottom: 10px;
@@ -49,5 +76,20 @@
     outline: none;
     background-color: #4cafe8;
     color: #fff;
+  }
+  .homer-form {
+
+  }
+  .homer-form-item {
+    margin-bottom: 10px;
+  }
+  .homer-form-item>span{
+    display: inline-block;
+    width:30%;
+    color: white;
+  }
+  .homer-form-item>input{
+    display: inline-block;
+    width:65%;
   }
 </style>
